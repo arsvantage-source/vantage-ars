@@ -14,6 +14,7 @@ import { Route as FindRouteImport } from './routes/find'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as GuidesRouteImport } from './routes/guides'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ModelRouteImport } from './routes/model'
 import { Route as OfficeRouteImport } from './routes/office'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RatesRouteImport } from './routes/rates'
@@ -23,7 +24,9 @@ import { Route as StatusRouteImport } from './routes/status'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WorkRouteImport } from './routes/work'
+import { Route as AccountTokenRouteImport } from './routes/account.$token'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiInboundEmailRouteImport } from './routes/api/inbound-email'
 import { Route as ApiSiteSignalRouteImport } from './routes/api/site-signal'
 import { Route as GuidesSlugRouteImport } from './routes/guides.$slug'
 import { Route as OfficeIndexRouteImport } from './routes/office/index'
@@ -50,6 +53,7 @@ import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as ApiAiStatusRouteImport } from './routes/api/ai/status'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCronFloorRouteImport } from './routes/api/cron/floor'
+import { Route as ApiPaymentsWebhookRouteImport } from './routes/api/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -74,6 +78,11 @@ const GuidesRoute = GuidesRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ModelRoute = ModelRouteImport.update({
+  id: '/model',
+  path: '/model',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfficeRoute = OfficeRouteImport.update({
@@ -121,9 +130,19 @@ const WorkRoute = WorkRouteImport.update({
   path: '/work',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountTokenRoute = AccountTokenRouteImport.update({
+  id: '/account/$token',
+  path: '/account/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiInboundEmailRoute = ApiInboundEmailRouteImport.update({
+  id: '/api/inbound-email',
+  path: '/api/inbound-email',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiSiteSignalRoute = ApiSiteSignalRouteImport.update({
@@ -256,6 +275,11 @@ const ApiCronFloorRoute = ApiCronFloorRouteImport.update({
   path: '/api/cron/floor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPaymentsWebhookRoute = ApiPaymentsWebhookRouteImport.update({
+  id: '/api/payments/webhook',
+  path: '/api/payments/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -263,6 +287,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guides': typeof GuidesRouteWithChildren
   '/login': typeof LoginRoute
+  '/model': typeof ModelRoute
   '/office': typeof OfficeRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
@@ -272,7 +297,9 @@ export interface FileRoutesByFullPath {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
+  '/account/$token': typeof AccountTokenRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/inbound-email': typeof ApiInboundEmailRoute
   '/api/site-signal': typeof ApiSiteSignalRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/office/approvals': typeof OfficeApprovalsRoute
@@ -299,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/api/ai/status': typeof ApiAiStatusRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/floor': typeof ApiCronFloorRoute
+  '/api/payments/webhook': typeof ApiPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -306,6 +334,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guides': typeof GuidesRouteWithChildren
   '/login': typeof LoginRoute
+  '/model': typeof ModelRoute
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -313,7 +342,9 @@ export interface FileRoutesByTo {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
+  '/account/$token': typeof AccountTokenRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/inbound-email': typeof ApiInboundEmailRoute
   '/api/site-signal': typeof ApiSiteSignalRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/office/approvals': typeof OfficeApprovalsRoute
@@ -340,6 +371,7 @@ export interface FileRoutesByTo {
   '/api/ai/status': typeof ApiAiStatusRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/floor': typeof ApiCronFloorRoute
+  '/api/payments/webhook': typeof ApiPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -348,6 +380,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/guides': typeof GuidesRouteWithChildren
   '/login': typeof LoginRoute
+  '/model': typeof ModelRoute
   '/office': typeof OfficeRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/rates': typeof RatesRoute
@@ -357,7 +390,9 @@ export interface FileRoutesById {
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/work': typeof WorkRoute
+  '/account/$token': typeof AccountTokenRoute
   '/api/health': typeof ApiHealthRoute
+  '/api/inbound-email': typeof ApiInboundEmailRoute
   '/api/site-signal': typeof ApiSiteSignalRoute
   '/guides/$slug': typeof GuidesSlugRoute
   '/office/approvals': typeof OfficeApprovalsRoute
@@ -384,6 +419,7 @@ export interface FileRoutesById {
   '/api/ai/status': typeof ApiAiStatusRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/cron/floor': typeof ApiCronFloorRoute
+  '/api/payments/webhook': typeof ApiPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -393,6 +429,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guides'
     | '/login'
+    | '/model'
     | '/office'
     | '/privacy'
     | '/rates'
@@ -402,7 +439,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/work'
+    | '/account/$token'
     | '/api/health'
+    | '/api/inbound-email'
     | '/api/site-signal'
     | '/guides/$slug'
     | '/office/approvals'
@@ -429,6 +468,7 @@ export interface FileRouteTypes {
     | '/api/ai/status'
     | '/api/auth/$'
     | '/api/cron/floor'
+    | '/api/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -436,6 +476,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guides'
     | '/login'
+    | '/model'
     | '/privacy'
     | '/rates'
     | '/reset-password'
@@ -443,7 +484,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/work'
+    | '/account/$token'
     | '/api/health'
+    | '/api/inbound-email'
     | '/api/site-signal'
     | '/guides/$slug'
     | '/office/approvals'
@@ -470,6 +513,7 @@ export interface FileRouteTypes {
     | '/api/ai/status'
     | '/api/auth/$'
     | '/api/cron/floor'
+    | '/api/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -477,6 +521,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/guides'
     | '/login'
+    | '/model'
     | '/office'
     | '/privacy'
     | '/rates'
@@ -486,7 +531,9 @@ export interface FileRouteTypes {
     | '/support'
     | '/terms'
     | '/work'
+    | '/account/$token'
     | '/api/health'
+    | '/api/inbound-email'
     | '/api/site-signal'
     | '/guides/$slug'
     | '/office/approvals'
@@ -513,6 +560,7 @@ export interface FileRouteTypes {
     | '/api/ai/status'
     | '/api/auth/$'
     | '/api/cron/floor'
+    | '/api/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -521,6 +569,7 @@ export interface RootRouteChildren {
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   GuidesRoute: typeof GuidesRouteWithChildren
   LoginRoute: typeof LoginRoute
+  ModelRoute: typeof ModelRoute
   OfficeRoute: typeof OfficeRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RatesRoute: typeof RatesRoute
@@ -530,12 +579,15 @@ export interface RootRouteChildren {
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   WorkRoute: typeof WorkRoute
+  AccountTokenRoute: typeof AccountTokenRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  ApiInboundEmailRoute: typeof ApiInboundEmailRoute
   ApiSiteSignalRoute: typeof ApiSiteSignalRoute
   QTokenRoute: typeof QTokenRoute
   ApiAiStatusRoute: typeof ApiAiStatusRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiCronFloorRoute: typeof ApiCronFloorRoute
+  ApiPaymentsWebhookRoute: typeof ApiPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -573,6 +625,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/model': {
+      id: '/model'
+      path: '/model'
+      fullPath: '/model'
+      preLoaderRoute: typeof ModelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/office': {
@@ -638,11 +697,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/$token': {
+      id: '/account/$token'
+      path: '/account/$token'
+      fullPath: '/account/$token'
+      preLoaderRoute: typeof AccountTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/health': {
       id: '/api/health'
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/inbound-email': {
+      id: '/api/inbound-email'
+      path: '/api/inbound-email'
+      fullPath: '/api/inbound-email'
+      preLoaderRoute: typeof ApiInboundEmailRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/site-signal': {
@@ -827,6 +900,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiCronFloorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/payments/webhook': {
+      id: '/api/payments/webhook'
+      path: '/api/payments/webhook'
+      fullPath: '/api/payments/webhook'
+      preLoaderRoute: typeof ApiPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -906,6 +986,7 @@ const rootRouteChildren: RootRouteChildren = {
   ForgotPasswordRoute: ForgotPasswordRoute,
   GuidesRoute: GuidesRouteWithChildren,
   LoginRoute: LoginRoute,
+  ModelRoute: ModelRoute,
   OfficeRoute: OfficeRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RatesRoute: RatesRoute,
@@ -915,12 +996,15 @@ const rootRouteChildren: RootRouteChildren = {
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   WorkRoute: WorkRoute,
+  AccountTokenRoute: AccountTokenRoute,
   ApiHealthRoute: ApiHealthRoute,
+  ApiInboundEmailRoute: ApiInboundEmailRoute,
   ApiSiteSignalRoute: ApiSiteSignalRoute,
   QTokenRoute: QTokenRoute,
   ApiAiStatusRoute: ApiAiStatusRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiCronFloorRoute: ApiCronFloorRoute,
+  ApiPaymentsWebhookRoute: ApiPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

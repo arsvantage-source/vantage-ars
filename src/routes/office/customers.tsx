@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { getCustomers } from "@/lib/office/api";
+import { getCustomers, createCustomerPortalLink } from "@/lib/office/api";
 import {
   customerAccountsToCsv,
   planLabel,
@@ -361,6 +361,21 @@ function AccountRows({
                 : "No active plan"}
             </p>
             <div className="mt-4 flex flex-wrap gap-3 text-xs">
+              <button
+                type="button"
+                className="text-accent underline-offset-4 hover:underline"
+                onClick={async () => {
+                  try {
+                    const res = await createCustomerPortalLink({ data: { companyName: account.companyName, days: 30 } });
+                    const url = `${window.location.origin}/account/${res.token}`;
+                    window.prompt("Customer portal link (copy):", url);
+                  } catch {
+                    window.alert("Could not create a portal link.");
+                  }
+                }}
+              >
+                Create portal link
+              </button>
               <Link to="/office/sales" className="text-accent underline-offset-4 hover:underline">
                 Open sales
               </Link>

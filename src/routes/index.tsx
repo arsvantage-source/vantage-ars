@@ -282,7 +282,8 @@ function HomePage() {
       <section className="border-b border-border py-16" aria-label="The practice">
         <h2 className="text-4xl sm:text-5xl">The work, as it sits.</h2>
         <p className="mt-4 max-w-2xl text-muted">
-          Voice, the network under it, and the cabinet those calls depend on. Remote first. On-site only when the written quote includes it.
+          Voice, the network under it, and the cabinet those calls depend on. Remote first. On-site
+          only when the written quote includes it.
         </p>
         <ul className="mt-8 grid gap-4 sm:grid-cols-3">
           {(

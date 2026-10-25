@@ -11,7 +11,7 @@ export const COMPANY = {
   authorRole: "Constitutional Author",
   constitutionVersion: "1.1.0",
   /** Release version, kept in step with package.json by the route tests. */
-  version: "5.0.0",
+  version: "5.2.0",
   autonomyLevel: "A3" as const,
   email: "juanlouw.greyling@gmail.com",
 };

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { auditToCsv, chainToCsv, csvCell, ledgerToCsv, toCsv } from "./csv.ts";
+import { auditToCsv, chainToCsv, csvCell, ledgerToCsv, sageInvoicesToCsv, toCsv, xeroInvoicesToCsv } from "./csv.ts";
 import type { AuditRow, DecisionRow, LedgerRow } from "./types.ts";
 
 describe("csv exports", () => {
@@ -90,3 +90,42 @@ describe("csv exports", () => {
     assert.match(csv, /prev,next/);
   });
 });
+
+
+  it("exports invoices in Xero import shape", () => {
+    const row = {
+      createdAt: "2026-04-01T10:00:00.000Z",
+      kind: "invoice",
+      counterparty: "Acme, Ltd",
+      status: "issued",
+      memo: "Managed support",
+      vatCents: 0,
+      amountCents: 7935,
+      relatedId: "INV-1",
+    } as LedgerRow;
+    const csv = xeroInvoicesToCsv([row, { ...row, kind: "receipt" } as LedgerRow]);
+    assert.match(csv, /^ContactName,InvoiceNumber/);
+    assert.match(csv, /Acme, Ltd/);
+    assert.match(csv, /Tax Exempt/);
+    assert.match(csv, /79\.35/);
+    // receipts are not invoices
+    assert.equal(csv.split("\r\n").length, 2);
+  });
+
+  it("exports invoices in Sage import shape", () => {
+    const row = {
+      createdAt: "2026-04-01T10:00:00.000Z",
+      kind: "invoice",
+      counterparty: "Acme, Ltd",
+      status: "issued",
+      memo: "Managed support",
+      vatCents: 1035,
+      amountCents: 7935,
+      relatedId: "INV-2",
+    } as LedgerRow;
+    const csv = sageInvoicesToCsv([row]);
+    assert.match(csv, /^Customer,InvoiceNumber/);
+    assert.match(csv, /69\.00/); // net
+    assert.match(csv, /10\.35/); // vat
+    assert.match(csv, /79\.35/); // gross
+  });

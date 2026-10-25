@@ -30,6 +30,8 @@ import { planById } from "./plans";
 import { cycleWindow, nextCycleStart } from "./subscription";
 import { buildServiceReport, summariseService } from "./fulfilment";
 import { collectServiceFacts } from "./service-facts.server";
+import { anchorIfDue } from "./anchor.server";
+
 import { resolveRecipient } from "./customer-notice.server";
 import type { WorkItem } from "./work-queue.server";
 import type { DutyView, PlannedWork } from "./duties";
@@ -1120,6 +1122,19 @@ const reportScopeDrift: Runner = async (item) => {
   };
 };
 
+const anchorChainHead: Runner = async (item) => {
+  const sql = await getSql();
+  const rows = await sql<{ last_audit_hash: string }>`
+    select last_audit_hash from company_state where id = ${COMPANY.id}
+  `;
+  const head = String(rows[0]?.last_audit_hash ?? "");
+  const anchor = await anchorIfDue(head);
+  if (!anchor) {
+    return noop("Audit chain head already anchored; nothing new to record.");
+  }
+  return noop(`Anchored audit-chain head ${head.slice(0, 12)} as ${anchor.id.slice(0, 8)}.`);
+};
+
 // ── Recurring revenue ─────────────────────────────────────────────────────────
 
 /**
@@ -1820,6 +1835,7 @@ export const RUNNERS: Record<string, Runner> = {
   file_missing_records: fileMissingRecords,
   halt_broken_chain: haltBrokenChain,
   report_scope_drift: reportScopeDrift,
+  anchor_chain_head: anchorChainHead,
   bill_subscription_cycle: billSubscriptionCycle,
   issue_won_invoice: issueWonInvoice,
   send_invoice_notice: sendInvoiceNotice,

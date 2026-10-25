@@ -2,6 +2,63 @@
 
 All notable changes to Vantage-ARS.
 
+## 5.1.0 — 2026-10-25
+
+### Added
+
+**Customer self-service portal.** A founder can issue a tokenized, read-only link
+for a company; the customer opens `/account/<token>` and sees their own
+invoices, receipts, quotes, subscriptions and notices, with no login and no
+office access. Links expire and can be revoked; one company's data never
+leaks through another's link.
+
+**Inbound email ingestion.** `POST /api/inbound-email` turns a posted email
+(from, subject, text) into a real inbound item, so a forwarding service can
+feed customer replies straight into reception.
+
+**Payment confirmation webhook.** `POST /api/payments/webhook` accepts a
+payment reference and amount, matches the invoice by reference, verifies the
+amount to the cent, and books the receipt through the existing ledger path.
+
+**Founder-controlled model cost ceilings.** The four model budget levels now
+live in a `cost_ceilings` table that only the founder writes; the office
+reads them at admission time and can never raise them. Defaults apply until
+the founder sets a value. Editable on `/office/governance`.
+
+**RFC 3161 timestamping for anchors.** Anchors can now carry a timestamp token
+from an external authority (`TIMESTAMP_AUTHORITY_URL`), stored verbatim on the
+`chain_anchors` row, so the head hash is pinned to a time the office cannot
+move.
+
+**Accounting exports.** The ledger page now exports Xero and Sage invoice-import
+CSV alongside the journal, so the books drop straight into accounting software.
+
+### Verification
+
+- `npm test`: unit checks plus the real-office verification, exit 0.
+- `npm run verify:office`: 231 checks, no mocks and no sample data.
+- `npm run typecheck`, `npm run lint`, `npm run format:check` and `npm run build:ci`.
+
+
+## 5.0.6 — 2026-10-25
+
+### Added
+
+**Audit-chain anchoring.** The office now writes an append-only `chain_anchors`
+row once a day carrying the current audit-chain head hash, and mirrors it to an
+optional file under `ANCHOR_DIR`. `verifyAnchorsAgainstChain` proves every
+anchored head is still in the chain, so a wholesale rewrite that removes an
+anchored head is detected instead of passing silently. The thirty-sixth duty,
+`seal_chain_anchor`, owns it. A true external timestamp authority (RFC 3161 or
+a transparency log) remains optional and is wired through the same store.
+
+### Verification
+
+- `npm test`: unit checks plus the real-office verification, exit 0.
+- `npm run verify:office`: 231 checks, no mocks and no sample data.
+- `npm run typecheck`, `npm run lint`, `npm run format:check` and `npm run build:ci`.
+
+
 ## 5.0.5 — 2026-10-24
 
 ### Added

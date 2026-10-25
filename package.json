@@ -1,6 +1,6 @@
 {
   "name": "vantage-ars",
-  "version": "5.0.0",
+  "version": "5.2.0",
   "private": true,
   "description": "Vantage-ARS: public site and founder-controlled, AI-staffed office (TanStack Start, Postgres).",
   "author": "Juan-louw Greyling <juanlouw.greyling@gmail.com>",

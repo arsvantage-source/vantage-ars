@@ -20,7 +20,7 @@ import {
 } from "@/lib/office/invoice";
 import { Select } from "@/components/ui/select";
 import { formatDateTime, formatZar } from "@/lib/office/money";
-import { ledgerToCsv } from "@/lib/office/csv";
+import { ledgerToCsv, sageInvoicesToCsv, xeroInvoicesToCsv } from "@/lib/office/csv";
 
 export const Route = createFileRoute("/office/ledger")({
   component: LedgerPage,
@@ -95,6 +95,7 @@ function LedgerPage() {
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-serif text-2xl">Journal</h2>
           {snapshot.ledger.length > 0 ? (
+            <>
             <Button
               type="button"
               variant="outline"
@@ -103,6 +104,23 @@ function LedgerPage() {
             >
               Export journal CSV
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => downloadCsv("vantage-xero.csv", xeroInvoicesToCsv(snapshot.ledger))}
+            >
+              Export Xero CSV
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => downloadCsv("vantage-sage.csv", sageInvoicesToCsv(snapshot.ledger))}
+            >
+              Export Sage CSV
+            </Button>
+            </>
           ) : null}
         </div>
         {snapshot.ledger.length === 0 ? (

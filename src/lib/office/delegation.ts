@@ -28,6 +28,7 @@
  * Pure module: no database, no clock, no environment. Unit tested directly.
  */
 import { PUBLISHED_RATES } from "./catalogue";
+import { listProducts } from "./products.server";
 
 /**
  * The action kinds a delegation may cover. This list is closed on purpose: a
@@ -97,12 +98,17 @@ export type DelegationVerdict = {
 };
 
 /** Published rate lines that may be delegated. A withheld line never can. */
+import { isOfferedProductSync, offeredProductIdsSync } from "./products.server";
+
 export function delegatableRateIds(): string[] {
+  const cached = offeredProductIdsSync();
+  if (cached.length) return cached;
   return PUBLISHED_RATES.filter((rate) => rate.offered).map((rate) => rate.id);
 }
 
 /** Whether a rate line exists, is offered, and may be charged. */
 export function isDelegatableRate(rateId: string): boolean {
+  if (isOfferedProductSync(rateId)) return true;
   const rate = PUBLISHED_RATES.find((item) => item.id === rateId);
   return Boolean(rate?.offered);
 }

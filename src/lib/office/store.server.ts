@@ -3,6 +3,7 @@ import { getSql, type Sql } from "../db";
 import { AGENT_DEFS, AGENT_BY_ID } from "./agents";
 import { CONSTITUTION } from "./constitution";
 import { COMPANY, GENESIS_HASH } from "./company";
+import { seedProductsIfEmpty } from "./products.server";
 import { authorizeAction } from "./governor";
 import { chainHash, sha256Hex, stableStringify } from "./hash";
 import { assessRisk, type RiskAssessment, type RiskTier, type RiskTierName } from "./risk";
@@ -283,6 +284,7 @@ async function provisionOffice(): Promise<void> {
   if (existing.length) {
     await syncRoster(sql);
     await seedPaymentInstructions(sql);
+    await seedProductsIfEmpty();
     return;
   }
 

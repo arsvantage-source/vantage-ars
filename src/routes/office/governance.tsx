@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getGovernanceRecord } from "@/lib/office/api";
+import { getGovernanceRecord, getCostCeilings, saveCostCeilings } from "@/lib/office/api";
 import { formatDateTime, formatZar } from "@/lib/office/format";
 import type { GateRecordRow, GovernanceRecord } from "@/lib/office/types";
 
@@ -16,11 +16,21 @@ export const Route = createFileRoute("/office/governance")({
 
 function GovernancePage() {
   const [record, setRecord] = useState<GovernanceRecord | null>(null);
+  const [ceilings, setCeilings] = useState<Record<string, number> | null>(null);
+  const [ceilingDraft, setCeilingDraft] = useState<Record<string, string>>({});
+  const [ceilingSaving, setCeilingSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
+    getCostCeilings()
+      .then((next) => {
+        if (cancelled) return;
+        setCeilings(next);
+        setCeilingDraft(Object.fromEntries(Object.entries(next).map(([k, v]) => [k, String(v)])));
+      })
+      .catch(() => {});
     getGovernanceRecord({ data: { limit: 100 } })
       .then((next) => {
         if (cancelled) return;
@@ -97,6 +107,57 @@ function GovernancePage() {
           not evidence against a third party until the office runs with a deployment secret.
         </p>
       ) : null}
+
+      <Card className="mb-6 p-4">
+        <h3 className="font-serif text-lg">Model cost ceilings (founder-controlled)</h3>
+        <p className="mt-1 text-xs text-muted">
+          The office reads these at admission time and cannot change them. Empty values keep the
+          documented defaults.
+        </p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-4">
+          {["capsule", "fire", "daily", "monthly"].map((level) => (
+            <label key={level} className="flex flex-col gap-1 text-xs">
+              <span className="uppercase tracking-wide text-muted">{level}</span>
+              <input
+                type="number"
+                min={0}
+                value={ceilingDraft[level] ?? ""}
+                onChange={(e) => setCeilingDraft((d) => ({ ...d, [level]: e.target.value }))}
+                className="rounded border border-border bg-surface px-2 py-1 text-sm"
+              />
+            </label>
+          ))}
+        </div>
+        <Button
+          type="button"
+          size="sm"
+          className="mt-3"
+          disabled={ceilingSaving}
+          onClick={async () => {
+            setCeilingSaving(true);
+            try {
+              const payload: Record<string, number> = {};
+              for (const level of ["capsule", "fire", "daily", "monthly"]) {
+                const v = Number(ceilingDraft[level]);
+                if (Number.isFinite(v) && v >= 0) payload[level] = v;
+              }
+              const next = await saveCostCeilings({ data: payload as never });
+              setCeilings(next);
+              setCeilingDraft(Object.fromEntries(Object.entries(next).map(([k, v]) => [k, String(v)])));
+            } finally {
+              setCeilingSaving(false);
+            }
+          }}
+        >
+          {ceilingSaving ? "Saving…" : "Save ceilings"}
+        </Button>
+        {ceilings ? (
+          <p className="mt-2 text-xs text-muted">
+            Active: capsule {ceilings.capsule}, fire {ceilings.fire}, daily {ceilings.daily}, monthly{" "}
+            {ceilings.monthly} cents.
+          </p>
+        ) : null}
+      </Card>
 
       {loading && !record ? (
         <Card className="p-4">

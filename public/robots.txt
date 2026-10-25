@@ -4,4 +4,5 @@ Disallow: /office
 Disallow: /login
 Disallow: /api/
 Disallow: /q/
+Disallow: /account/
 Sitemap: https://vantage-ars.co.za/sitemap.xml

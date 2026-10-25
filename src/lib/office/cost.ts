@@ -87,6 +87,20 @@ export function budgetRules(): BudgetRule[] {
   ];
 }
 
+/**
+ * Build the budget rules from founder-controlled ceilings. A level that is
+ * missing falls back to the documented default, so a fresh office keeps its
+ * original envelope until the founder chooses otherwise.
+ */
+export function budgetRulesFromCeilings(ceilings: Record<string, number>): BudgetRule[] {
+  return [
+    { level: "capsule", ceilingCents: ceilings.capsule ?? CAPSULE_BUDGET_CENTS },
+    { level: "fire", ceilingCents: ceilings.fire ?? FIRE_BUDGET_CENTS },
+    { level: "daily", ceilingCents: ceilings.daily ?? DAILY_BUDGET_CENTS },
+    { level: "monthly", ceilingCents: ceilings.monthly ?? MONTHLY_BUDGET_CENTS },
+  ];
+}
+
 // ── Cost arithmetic ───────────────────────────────────────────────────────────
 
 /**

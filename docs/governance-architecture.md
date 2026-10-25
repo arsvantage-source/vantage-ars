@@ -428,12 +428,14 @@ what closing the gap would take.
   produces its own evidence — documents, ledger rows, service reports — and
   checks it against itself. To close it: have the appraising party sign a
   statement about the evidence and attach it to the decision.
-- **No OpenTimestamps or RFC 3161 anchoring.** The chain is internally
-  verifiable and SEAL checks it every twelve hours, but nothing outside the
-  database holds a copy of the head, so a wholesale rewrite of the chain
-  could not be detected from outside. To close it: anchor the head hash
-  periodically to a transparency log or a timestamp authority, and verify the
-  proof on the way back in.
+- **Anchoring.** The chain is internally verifiable and SEAL checks it every
+  twelve hours. The office now also writes an append-only `chain_anchors` row
+  once a day carrying the head hash, and mirrors it to an optional file under
+  `ANCHOR_DIR`. `verifyAnchorsAgainstChain` proves every anchored head is still
+  in the chain, so a wholesale rewrite that removes an anchored head is
+  detected. A true external timestamp authority (RFC 3161 / a transparency log)
+  is still optional: set `ANCHOR_DIR` to a path that is itself replicated or
+  append-only for the strongest guarantee.
 - **No OPA or Rego policy engine.** The policy is TypeScript:
   `src/lib/office/governor.ts`, `src/lib/office/delegation.ts` and
   `src/lib/office/constitution.ts`. It is reviewed in the same way as every

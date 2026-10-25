@@ -3,11 +3,13 @@ import { getSql, type Sql } from "../db";
 import { AGENT_BY_ID } from "./agents";
 import { resolveModelTarget, type ModelTarget } from "./ai-provider";
 import { COMPANY } from "./company";
+import { readCostCeilings } from "./cost-ceilings.server";
 import { CONSTITUTION } from "./constitution";
 import { isActionKind } from "./agents";
 import {
   admit,
   budgetRules,
+  budgetRulesFromCeilings,
   estimateCost,
   formatRefusal,
   type BudgetState,
@@ -382,7 +384,8 @@ export async function proposeActions(input: {
   await ensureBudgetTables(sql);
   const startedAt = new Date();
   const state = await readBudgetState(sql, input.agentId, startedAt);
-  const verdict = admit(budgetRules(), estimate, rate, state);
+  const ceilings = await readCostCeilings();
+  const verdict = admit(budgetRulesFromCeilings(ceilings), estimate, rate, state);
   if (!verdict.admitted) {
     const message = formatRefusal(verdict);
     const projected = estimateCost(estimate, rate);

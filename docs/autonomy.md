@@ -57,7 +57,7 @@ reconstructing it from the queue afterwards.
                  └──────┬───────┘
                         │  no
                  ┌──────▼───────────┐
-      35 duties → │      PLAN        │  pure function of the real office state
+      36 duties → │      PLAN        │  pure function of the real office state
                  └──────┬───────────┘  returns work, or nothing
                         │
                  ┌──────▼───────────┐
@@ -76,7 +76,7 @@ reconstructing it from the queue afterwards.
 
 ## The duties
 
-Thirty-five duties, every agent has at least one, and none of them can act
+Thirty-six duties, every agent has at least one, and none of them can act
 outside its owner's role.
 
 | Agent   | Duty                          | Cadence | What it does with real records                                                                                                                                                                      |
@@ -116,6 +116,7 @@ outside its owner's role.
 | KEEP    | `keep_subscription_review`    | 168h    | Reviews the recurring-revenue book weekly: subscriptions past their billing date, and whether the published prices still match the plans the office sells                                           |
 | SEAL    | `seal_chain_verify`           | 12h     | **Halts the office** if the audit chain does not verify                                                                                                                                             |
 | SEAL    | `seal_scope_audit`            | 24h     | Reports escalations that suggest an agent is unsure of its role                                                                                                                                     |
+| SEAL    | `seal_chain_anchor`           | 24h     | Records the audit-chain head once a day as an external witness, so a later rewrite of the chain can be detected                                                                                     |
 
 ## What autonomy is allowed to do
 

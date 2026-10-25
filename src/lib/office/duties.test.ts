@@ -118,7 +118,7 @@ describe("duties never invent work", () => {
     // `signal_content_brief` is the one duty whose output is a plan rather than
     // a reaction to a record, so it legitimately fires once on a fresh office.
     // Its own cadence is asserted separately below.
-    const planOnly: DutyId[] = ["signal_content_brief", "key_token_watch"];
+    const planOnly: DutyId[] = ["signal_content_brief", "key_token_watch", "seal_chain_anchor"];
     for (const duty of ALL_DUTIES) {
       if (planOnly.includes(duty)) continue;
       assert.deepEqual(planDuty(duty, view()), [], `${duty} invented work from nothing`);

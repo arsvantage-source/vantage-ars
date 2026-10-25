@@ -59,6 +59,9 @@ import {
   getApprovalContext as readApprovalContext,
   listDecisionEpisodes as readDecisionEpisodes,
 } from "./store.server";
+import { writeCostCeilings } from "./cost-ceilings.server";
+import { listProducts, getProduct, createProduct, updateProduct, deleteProduct } from "./products.server";
+import { createPortalLink, resolvePortalLink, readCustomerAccount } from "./customer-portal.server";
 import { DELEGATABLE_ACTIONS, DELEGATION_PRESETS } from "./delegation";
 import { tick, runNow, schedulerStatus } from "./scheduler.server";
 import { publicStatus } from "./public-status";
@@ -441,6 +444,71 @@ export const replyOfficeChat = createServerFn({ method: "POST" })
   .middleware([founderMiddleware])
   .validator((input: { threadId: string; body: string }) => input)
   .handler(async ({ data }) => founderReply(data.threadId, data.body));
+
+export const getCostCeilings = createServerFn({ method: "GET" })
+  .middleware([founderMiddleware])
+  .handler(async () => {
+    const { readCostCeilings } = await import("./cost-ceilings.server");
+    return readCostCeilings();
+  });
+
+export const saveCostCeilings = createServerFn({ method: "POST" })
+  .middleware([founderMiddleware])
+  .validator((input: { capsule?: number; fire?: number; daily?: number; monthly?: number }) => input)
+  .handler(async ({ data }) => {
+    await writeCostCeilings(data, "founder");
+    const { readCostCeilings } = await import("./cost-ceilings.server");
+    return await readCostCeilings();
+  });
+
+export const createCustomerPortalLink = createServerFn({ method: "POST" })
+  .middleware([founderMiddleware])
+  .validator((input: { companyName: string; days?: number }) => input)
+  .handler(async ({ data }) => {
+    return await createPortalLink({ companyName: data.companyName, days: data.days });
+  });
+
+export const getCustomerPortal = createServerFn({ method: "POST" })
+  .validator((input: { token: string }) => input)
+  .handler(async ({ data }) => {
+    const resolved = await resolvePortalLink(data.token);
+    if (!resolved) return { ok: false as const, error: "This link is not valid, has expired, or has been withdrawn." };
+    const account = await readCustomerAccount(resolved.companyName);
+    return { ok: true as const, account };
+  });
+
+export const getProducts = createServerFn({ method: "GET" })
+  .middleware([founderMiddleware])
+  .handler(async () => listProducts());
+
+export const getProductById = createServerFn({ method: "GET" })
+  .middleware([founderMiddleware])
+  .validator((input: { id: string }) => input)
+  .handler(async ({ data }) => getProduct(data.id));
+
+export const createProductEntry = createServerFn({ method: "POST" })
+  .middleware([founderMiddleware])
+  .validator((input: { id?: string; title: string; scope: string; price: string; basis: string; offered: boolean; category: string }) => input)
+  .handler(async ({ data }) => createProduct(data));
+
+export const updateProductEntry = createServerFn({ method: "POST" })
+  .middleware([founderMiddleware])
+  .validator((input: { id: string; patch: Record<string, unknown> }) => input)
+  .handler(async ({ data }) => updateProduct(data.id, data.patch as never));
+
+export const deleteProductEntry = createServerFn({ method: "POST" })
+  .middleware([founderMiddleware])
+  .validator((input: { id: string }) => input)
+  .handler(async ({ data }) => {
+    await deleteProduct(data.id);
+    return { ok: true };
+  });
+
+export const getPublicProducts = createServerFn({ method: "GET" }).handler(async () => {
+  const { listProducts } = await import("./products.server");
+  const products = await listProducts(true);
+  return products;
+});
 
 export const haltOffice = createServerFn({ method: "POST" })
   .middleware([founderMiddleware])

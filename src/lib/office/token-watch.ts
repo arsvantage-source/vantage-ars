@@ -28,7 +28,8 @@ export function classifyCloudflareToken(value: string | undefined): {
   if (token.length < 20) {
     return {
       state: "unusable",
-      detail: "The token is too short to be a Cloudflare dashboard API token. The value was not recorded.",
+      detail:
+        "The token is too short to be a Cloudflare dashboard API token. The value was not recorded.",
     };
   }
   return {
@@ -51,11 +52,15 @@ export function tokenVerdict(
   if (!remote) {
     return {
       state: "unreachable",
-      detail: "Cloudflare could not be asked whether the token is valid. The value was not recorded.",
+      detail:
+        "Cloudflare could not be asked whether the token is valid. The value was not recorded.",
     };
   }
   if (remote.ok) {
-    return { state: "accepted", detail: "Cloudflare accepted the token. The value was not recorded." };
+    return {
+      state: "accepted",
+      detail: "Cloudflare accepted the token. The value was not recorded.",
+    };
   }
   return {
     state: "rejected",

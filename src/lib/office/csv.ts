@@ -90,3 +90,68 @@ export function chainToCsv(audit: readonly AuditRow[], decisions: readonly Decis
     ]),
   );
 }
+
+
+/**
+ * Xero invoice-import CSV.
+ *
+ * One row per invoice ledger entry, in the shape Xero's "Import sales
+ * invoices" wizard accepts. Amounts are in ZAR (the office's currency); VAT is
+ * reported only where the invoice actually carried it. The office never states
+ * VAT on a recurring invoice, so those rows read "Tax Exempt".
+ */
+export function xeroInvoicesToCsv(rows: readonly LedgerRow[]): string {
+  const invoices = rows.filter((row) => row.kind === "invoice");
+  return toCsv(
+    [
+      "ContactName",
+      "InvoiceNumber",
+      "InvoiceDate",
+      "DueDate",
+      "Description",
+      "Quantity",
+      "UnitAmount",
+      "AccountCode",
+      "TaxType",
+      "Currency",
+    ],
+    invoices.map((row) => {
+      const date = row.createdAt.slice(0, 10);
+      const taxType = row.vatCents > 0 ? "15% (VAT on Income)" : "Tax Exempt";
+      return [
+        row.counterparty,
+        row.relatedId ?? row.id ?? "",
+        date,
+        date,
+        row.memo || row.kind,
+        1,
+        (row.amountCents / 100).toFixed(2),
+        "200",
+        taxType,
+        "ZAR",
+      ];
+    }),
+  );
+}
+
+/**
+ * Sage 50 invoice-import CSV.
+ *
+ * A simpler, older shape for offices that run Sage: customer, invoice number,
+ * date, net, VAT, gross.
+ */
+export function sageInvoicesToCsv(rows: readonly LedgerRow[]): string {
+  const invoices = rows.filter((row) => row.kind === "invoice");
+  return toCsv(
+    ["Customer", "InvoiceNumber", "Date", "Net", "VAT", "Gross", "Reference"],
+    invoices.map((row) => [
+      row.counterparty,
+      row.relatedId ?? row.id ?? "",
+      row.createdAt.slice(0, 10),
+      ((row.amountCents - row.vatCents) / 100).toFixed(2),
+      (row.vatCents / 100).toFixed(2),
+      (row.amountCents / 100).toFixed(2),
+      row.memo || "",
+    ]),
+  );
+}

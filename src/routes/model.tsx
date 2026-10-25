@@ -98,7 +98,9 @@ function ModelPage() {
         <ol className="mt-8 grid gap-3 md:grid-cols-2">
           {PATH.map(([title, note], index) => (
             <li key={title} className="flex gap-4 border-b border-border py-4">
-              <span className="font-mono text-sm text-accent">{String(index + 1).padStart(2, "0")}</span>
+              <span className="font-mono text-sm text-accent">
+                {String(index + 1).padStart(2, "0")}
+              </span>
               <span>
                 <span className="block font-semibold text-fg">{title}</span>
                 <span className="mt-1 block text-sm leading-relaxed text-muted">{note}</span>
@@ -117,7 +119,9 @@ function ModelPage() {
         </h2>
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
           <div className="panel rounded-2xl p-6">
-            <h3 className="font-mono text-xs tracking-[0.18em] text-ok uppercase">Runs on the schedule</h3>
+            <h3 className="font-mono text-xs tracking-[0.18em] text-ok uppercase">
+              Runs on the schedule
+            </h3>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed">
               {ALONE.map((item) => (
                 <li key={item}>{item}</li>
@@ -125,7 +129,9 @@ function ModelPage() {
             </ul>
           </div>
           <div className="panel rounded-2xl p-6">
-            <h3 className="font-mono text-xs tracking-[0.18em] text-accent uppercase">Stops for a decision</h3>
+            <h3 className="font-mono text-xs tracking-[0.18em] text-accent uppercase">
+              Stops for a decision
+            </h3>
             <ul className="mt-4 space-y-3 text-sm leading-relaxed">
               {WAITS.map((item) => (
                 <li key={item}>{item}</li>

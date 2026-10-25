@@ -266,6 +266,7 @@ export type DutyId =
   | "keep_records"
   | "seal_chain_verify"
   | "seal_scope_audit"
+  | "seal_chain_anchor"
   | "ledger_subscription_billing"
   | "ledger_dunning"
   | "ledger_billing"
@@ -304,6 +305,7 @@ export const DUTY_CADENCE_MINUTES: Record<DutyId, number> = {
   keep_records: 720,
   seal_chain_verify: 720,
   seal_scope_audit: 1440,
+  seal_chain_anchor: 1440,
   ledger_subscription_billing: 60,
   ledger_dunning: 240,
   ledger_billing: 30,
@@ -343,6 +345,7 @@ export const DUTY_OWNER: Record<DutyId, string> = {
   keep_records: "keep",
   seal_chain_verify: "seal",
   seal_scope_audit: "seal",
+  seal_chain_anchor: "seal",
   ledger_subscription_billing: "ledger",
   ledger_dunning: "ledger",
   ledger_billing: "ledger",
@@ -382,6 +385,7 @@ export const DUTY_TITLES: Record<DutyId, string> = {
   keep_records: "Check the filing is complete",
   seal_chain_verify: "Verify the audit chain",
   seal_scope_audit: "Audit agents against their roles",
+  seal_chain_anchor: "Anchor the audit chain head",
   ledger_subscription_billing: "Bill the subscriptions that are due",
   ledger_dunning: "Chase overdue invoices",
   ledger_billing: "Invoice won work and send the paperwork",
@@ -626,6 +630,8 @@ export function planDuty(duty: DutyId, view: DutyView): PlannedWork[] {
       return planChainVerify(view);
     case "seal_scope_audit":
       return planScopeAudit(view);
+    case "seal_chain_anchor":
+      return planChainAnchor(view);
     case "ledger_subscription_billing":
       return planSubscriptionBilling(view);
     case "ledger_dunning":
@@ -1435,6 +1441,24 @@ function planScopeAudit(view: DutyView): PlannedWork[] {
         approvals: rogue.slice(0, 10).map((a) => ({ id: a.id, title: a.title, agent: a.kind })),
       },
       dedupeKey: `scope-drift:${new Date(view.now).toISOString().slice(0, 10)}`,
+    },
+  ];
+}
+
+function planChainAnchor(view: DutyView): PlannedWork[] {
+  // The office records the audit-chain head once a day, whatever the chain's
+  // state, so that a later rewrite — including one that happened while the
+  // chain was already broken — can be detected against an earlier witness.
+  // Chain verification itself is SEAL's job; anchoring only witnesses.
+  return [
+    {
+      agentId: "seal",
+      kind: "anchor_chain_head",
+      reason:
+        "Record the current audit-chain head so a later rewrite of the chain can be detected.",
+      priority: 35,
+      payload: {},
+      dedupeKey: `chain-anchor:${new Date(view.now).toISOString().slice(0, 10)}`,
     },
   ];
 }
